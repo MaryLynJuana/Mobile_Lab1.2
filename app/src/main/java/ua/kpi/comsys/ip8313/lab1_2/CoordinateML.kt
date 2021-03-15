@@ -8,7 +8,7 @@ enum class Direction(val minDegrees: Int, val maxDegrees: Int,
                      val minMinutes: UInt = 0u, val maxMinutes: UInt = 59u,
                      val minSeconds: UInt = 0u, val maxSeconds: UInt = 59u) {
     LATITUDE(-90, 90),
-    LONGTITUDE(-180, 180)
+    LONGITUDE(-180, 180)
 }
 
 class CoordinateML(private val direction: Direction) {
@@ -33,6 +33,16 @@ class CoordinateML(private val direction: Direction) {
                 "Seconds value should be between ${direction.minSeconds} and ${direction.maxSeconds}"
             )
         }
+        if (degrees == direction.maxDegrees && (minutes > 0u || seconds > 0u)) {
+            throw InvalidParameterException(
+                "Coordinate value shouldn't be higher than ${direction.maxDegrees}°0′0″"
+            )
+        }
+        if (degrees == direction.minDegrees && (minutes > 0u || seconds > 0u)) {
+            throw InvalidParameterException(
+                    "Coordinate value shouldn't be lower than ${direction.minDegrees}°0′0″"
+            )
+        }
         this.degrees = degrees
         this.minutes = minutes
         this.seconds = seconds
@@ -44,7 +54,7 @@ class CoordinateML(private val direction: Direction) {
                 if (this.degrees >= 0) "N"
                 else "S"
             }
-            Direction.LONGTITUDE -> {
+            Direction.LONGITUDE -> {
                 if (this.degrees >= 0) "E"
                 else "W"
             }
@@ -99,9 +109,9 @@ fun main() {
     val coord1 = CoordinateML(Direction.LATITUDE)
     println(coord1.getValueForPrint())
     println("Створення екземпляру координати з заданим набором значень (градуси, мінути, секунди)")
-    val coord2 = CoordinateML(Direction.LATITUDE, 90, 59u,5u)
+    val coord2 = CoordinateML(Direction.LATITUDE, 89, 59u,5u)
     println(coord2.getValueForPrint())
-    val coord3 = CoordinateML(Direction.LONGTITUDE, -180, 14u,10u)
+    val coord3 = CoordinateML(Direction.LONGITUDE, -179, 14u,10u)
     println("Виведення результату методу, що повертає рядок з градусами, мінутами, секундами")
     println(coord3.getValueForPrint())
     println("Виведення результату методу, що повертає рядок з десятковим значенням координати")
